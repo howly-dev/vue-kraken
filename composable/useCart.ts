@@ -1,5 +1,4 @@
-import { useMedusaClient } from "#imports";
-import { onMounted } from "@vue/runtime-core";
+import { onMounted, useMedusaClient } from "#imports";
 
 export function useCart() {
   const client = useMedusaClient();
@@ -12,6 +11,7 @@ export function useCart() {
       localStorage.setItem("cart_id", cart.id);
     } else {
       const { cart } = await client.carts.retrieve(cartId);
+      console.log(cart);
     }
   };
 

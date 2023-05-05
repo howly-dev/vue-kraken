@@ -1,11 +1,14 @@
 <template>
-  <HomeHero />
-  <HomeProducts :products="products" />
+  <div>
+    <HomeHero />
+    <HomeProducts :products="products" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import regions from "@/mocks/regions.json";
 import transformProductPreview from "~/utils/transform-product-preview";
+import { useAsyncData, useMedusaClient } from "#imports";
 const client = useMedusaClient();
 
 const { data: products } = useAsyncData(

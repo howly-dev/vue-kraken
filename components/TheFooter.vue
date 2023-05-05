@@ -1,9 +1,7 @@
-<template></template>
+<template>
+  <div>{{ text }}</div>
+</template>
 
-<script>
-export default {
-  name: "TheFooter.vue",
-};
+<script setup>
+const text = "Footer";
 </script>
-
-<style scoped></style>

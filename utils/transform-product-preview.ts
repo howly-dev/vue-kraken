@@ -9,7 +9,7 @@ const transformProductPreview = (
 ): ProductPreviewType => {
   const variants = product.variants as CalculatedVariant[];
 
-  let cheapestVariant = undefined;
+  let cheapestVariant;
 
   if (variants?.length > 0) {
     cheapestVariant = variants.reduce((acc, curr) => {
@@ -30,14 +30,14 @@ const transformProductPreview = (
       ? {
           calculated_price: formatAmount({
             amount: cheapestVariant.calculated_price,
-            region: region,
+            region,
             includeTaxes: false,
-          }),
+          } as any),
           original_price: formatAmount({
             amount: cheapestVariant.original_price,
-            region: region,
+            region,
             includeTaxes: false,
-          }),
+          } as any),
           difference: getPercentageDiff(
             cheapestVariant.original_price,
             cheapestVariant.calculated_price

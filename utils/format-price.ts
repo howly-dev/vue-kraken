@@ -1,6 +1,14 @@
+import {
+  ProductVariant as ProductVariantEntity,
+  Region,
+  StoreCartsRes,
+} from "@medusajs/medusa";
 import { ProductVariantInfo, RegionInfo } from "../types";
+/// /////////////////////////////////////////////////
 
-////////////// medusa-react/utils /////////////
+/// /////////// medusa-react/types.ts /////////////
+
+/// /////////// medusa-react/utils /////////////
 export const isObject = (input: any) => input instanceof Object;
 export const isArray = (input: any) => Array.isArray(input);
 export const isEmpty = (input: any) => {
@@ -12,38 +20,38 @@ export const isEmpty = (input: any) => {
     (typeof input === "string" && input.trim().length === 0)
   );
 };
-////////////////////////////////////////////////////
-
-////////////// medusa-react/types.ts /////////////
-import {
-  ProductVariant as ProductVariantEntity,
-  Region,
-  StoreCartsRes,
-} from "@medusajs/medusa";
 
 // Choose only a subset of the type Region to allow for some flexibility
 export type RegionInfo = Pick<
   Region,
   "currency_code" | "tax_code" | "tax_rate"
 >;
+
+type ConvertDateToString<T extends {}> = {
+  [P in keyof T]: T[P] extends Date ? Date | string : T[P];
+};
 export type ProductVariant = ConvertDateToString<
   Omit<ProductVariantEntity, "beforeInsert">
 >;
 export type ProductVariantInfo = Pick<ProductVariant, "prices">;
 
-type ConvertDateToString<T extends {}> = {
-  [P in keyof T]: T[P] extends Date ? Date | string : T[P];
-};
-
 export type Cart = StoreCartsRes["cart"];
-//////////////////////////////////////////
+/// ///////////////////////////////////////
 
-////////////// medusa-react/types.ts /////////////
+/// /////////// medusa-react/types.ts /////////////
 
 type FormatVariantPriceParams = {
   variant: ProductVariantInfo;
   region: RegionInfo;
   includeTaxes?: boolean;
+  minimumFractionDigits?: number;
+  maximumFractionDigits?: number;
+  locale?: string;
+};
+
+type ConvertToLocaleParams = {
+  amount: number;
+  currency_code: string;
   minimumFractionDigits?: number;
   maximumFractionDigits?: number;
   locale?: string;
@@ -103,7 +111,7 @@ export const getVariantPrice = (
   variant: ProductVariantInfo,
   region: RegionInfo
 ) => {
-  let price = variant?.prices?.find(
+  const price = variant?.prices?.find(
     (p) =>
       p.currency_code.toLowerCase() === region?.currency_code?.toLowerCase()
   );
@@ -170,7 +178,7 @@ const noDivisionCurrencies = ["krw", "jpy", "vnd"];
 
 const convertToDecimal = (amount: number, region: RegionInfo) => {
   const divisor = noDivisionCurrencies.includes(
-    region?.currency_code?.toLowerCase()
+    <string>region?.currency_code?.toLowerCase()
   )
     ? 1
     : 100;
@@ -185,16 +193,19 @@ const getTaxRate = (region?: RegionInfo) => {
 // TODO fix typescript issue with Intl.NumberFormat
 const convertToLocale = ({
   amount,
+  // eslint-disable-next-line camelcase
   currency_code,
   minimumFractionDigits,
   maximumFractionDigits,
   locale = "en-US",
 }: ConvertToLocaleParams) => {
+  // eslint-disable-next-line camelcase
   return currency_code && !isEmpty(currency_code)
     ? new Intl.NumberFormat(
         locale as string,
         {
           style: "currency",
+          // eslint-disable-next-line camelcase
           currency: currency_code,
           minimumFractionDigits,
           maximumFractionDigits,
@@ -202,13 +213,4 @@ const convertToLocale = ({
       ).format(amount)
     : amount.toString();
 };
-
-type ConvertToLocaleParams = {
-  amount: number;
-  currency_code: string;
-  minimumFractionDigits?: number;
-  maximumFractionDigits?: number;
-  locale?: string;
-};
-
-//////////////////////////////////////////
+/// ///////////////////////////////////////

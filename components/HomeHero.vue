@@ -11,10 +11,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "HomeHero.vue",
-};
-</script>
+<script setup></script>
 
 <style scoped></style>
