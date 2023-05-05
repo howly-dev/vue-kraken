@@ -1,13 +1,8 @@
 <template>
-  <div v-for="product in products">
-    <Card class="my-4">
-      <template #title>{{ product.title }}</template>
-      <template #content>
-        <p>
-          {{ product.description }}
-        </p>
-      </template>
-    </Card>
+  <div class="grid px-4">
+    <div v-for="product in products" class="col-3">
+        <ProductCard :product="product" />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
