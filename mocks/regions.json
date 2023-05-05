@@ -1,139 +1,139 @@
 [
-    {
-        "id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT",
-        "created_at": "2023-05-02T15:11:06.634Z",
-        "updated_at": "2023-05-02T15:11:06.634Z",
-        "deleted_at": null,
-        "name": "EU",
-        "currency_code": "eur",
-        "tax_rate": 0,
-        "tax_code": null,
-        "gift_cards_taxable": true,
-        "automatic_taxes": true,
-        "tax_provider_id": null,
-        "metadata": null,
-        "countries": [
-            {
-                "id": 215,
-                "iso_2": "se",
-                "iso_3": "swe",
-                "num_code": 752,
-                "name": "SWEDEN",
-                "display_name": "Sweden",
-                "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
-            },
-            {
-                "id": 235,
-                "iso_2": "gb",
-                "iso_3": "gbr",
-                "num_code": 826,
-                "name": "UNITED KINGDOM",
-                "display_name": "United Kingdom",
-                "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
-            },
-            {
-                "id": 82,
-                "iso_2": "de",
-                "iso_3": "deu",
-                "num_code": 276,
-                "name": "GERMANY",
-                "display_name": "Germany",
-                "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
-            },
-            {
-                "id": 60,
-                "iso_2": "dk",
-                "iso_3": "dnk",
-                "num_code": 208,
-                "name": "DENMARK",
-                "display_name": "Denmark",
-                "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
-            },
-            {
-                "id": 75,
-                "iso_2": "fr",
-                "iso_3": "fra",
-                "num_code": 250,
-                "name": "FRANCE",
-                "display_name": "France",
-                "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
-            },
-            {
-                "id": 209,
-                "iso_2": "es",
-                "iso_3": "esp",
-                "num_code": 724,
-                "name": "SPAIN",
-                "display_name": "Spain",
-                "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
-            },
-            {
-                "id": 109,
-                "iso_2": "it",
-                "iso_3": "ita",
-                "num_code": 380,
-                "name": "ITALY",
-                "display_name": "Italy",
-                "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
-            }
-        ],
-        "payment_providers": [
-            {
-                "id": "manual",
-                "is_installed": true
-            }
-        ],
-        "fulfillment_providers": [
-            {
-                "id": "manual",
-                "is_installed": true
-            }
-        ]
-    },
-    {
-        "id": "reg_01GZEG8THAH9E5S3M74BY8KWB5",
-        "created_at": "2023-05-02T15:11:06.634Z",
-        "updated_at": "2023-05-02T15:11:06.634Z",
-        "deleted_at": null,
-        "name": "NA",
-        "currency_code": "usd",
-        "tax_rate": 0,
-        "tax_code": null,
-        "gift_cards_taxable": true,
-        "automatic_taxes": true,
-        "tax_provider_id": null,
-        "metadata": null,
-        "countries": [
-            {
-                "id": 236,
-                "iso_2": "us",
-                "iso_3": "usa",
-                "num_code": 840,
-                "name": "UNITED STATES",
-                "display_name": "United States",
-                "region_id": "reg_01GZEG8THAH9E5S3M74BY8KWB5"
-            },
-            {
-                "id": 39,
-                "iso_2": "ca",
-                "iso_3": "can",
-                "num_code": 124,
-                "name": "CANADA",
-                "display_name": "Canada",
-                "region_id": "reg_01GZEG8THAH9E5S3M74BY8KWB5"
-            }
-        ],
-        "payment_providers": [
-            {
-                "id": "manual",
-                "is_installed": true
-            }
-        ],
-        "fulfillment_providers": [
-            {
-                "id": "manual",
-                "is_installed": true
-            }
-        ]
-    }
+  {
+    "id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT",
+    "created_at": "2023-05-02T15:11:06.634Z",
+    "updated_at": "2023-05-02T15:11:06.634Z",
+    "deleted_at": null,
+    "name": "EU",
+    "currency_code": "eur",
+    "tax_rate": 0,
+    "tax_code": null,
+    "gift_cards_taxable": true,
+    "automatic_taxes": true,
+    "tax_provider_id": null,
+    "metadata": null,
+    "countries": [
+      {
+        "id": 215,
+        "iso_2": "se",
+        "iso_3": "swe",
+        "num_code": 752,
+        "name": "SWEDEN",
+        "display_name": "Sweden",
+        "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
+      },
+      {
+        "id": 235,
+        "iso_2": "gb",
+        "iso_3": "gbr",
+        "num_code": 826,
+        "name": "UNITED KINGDOM",
+        "display_name": "United Kingdom",
+        "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
+      },
+      {
+        "id": 82,
+        "iso_2": "de",
+        "iso_3": "deu",
+        "num_code": 276,
+        "name": "GERMANY",
+        "display_name": "Germany",
+        "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
+      },
+      {
+        "id": 60,
+        "iso_2": "dk",
+        "iso_3": "dnk",
+        "num_code": 208,
+        "name": "DENMARK",
+        "display_name": "Denmark",
+        "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
+      },
+      {
+        "id": 75,
+        "iso_2": "fr",
+        "iso_3": "fra",
+        "num_code": 250,
+        "name": "FRANCE",
+        "display_name": "France",
+        "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
+      },
+      {
+        "id": 209,
+        "iso_2": "es",
+        "iso_3": "esp",
+        "num_code": 724,
+        "name": "SPAIN",
+        "display_name": "Spain",
+        "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
+      },
+      {
+        "id": 109,
+        "iso_2": "it",
+        "iso_3": "ita",
+        "num_code": 380,
+        "name": "ITALY",
+        "display_name": "Italy",
+        "region_id": "reg_01GZEG8TG0V3W8FMEZ7XSPMPCT"
+      }
+    ],
+    "payment_providers": [
+      {
+        "id": "manual",
+        "is_installed": true
+      }
+    ],
+    "fulfillment_providers": [
+      {
+        "id": "manual",
+        "is_installed": true
+      }
+    ]
+  },
+  {
+    "id": "reg_01GZEG8THAH9E5S3M74BY8KWB5",
+    "created_at": "2023-05-02T15:11:06.634Z",
+    "updated_at": "2023-05-02T15:11:06.634Z",
+    "deleted_at": null,
+    "name": "NA",
+    "currency_code": "usd",
+    "tax_rate": 0,
+    "tax_code": null,
+    "gift_cards_taxable": true,
+    "automatic_taxes": true,
+    "tax_provider_id": null,
+    "metadata": null,
+    "countries": [
+      {
+        "id": 236,
+        "iso_2": "us",
+        "iso_3": "usa",
+        "num_code": 840,
+        "name": "UNITED STATES",
+        "display_name": "United States",
+        "region_id": "reg_01GZEG8THAH9E5S3M74BY8KWB5"
+      },
+      {
+        "id": 39,
+        "iso_2": "ca",
+        "iso_3": "can",
+        "num_code": 124,
+        "name": "CANADA",
+        "display_name": "Canada",
+        "region_id": "reg_01GZEG8THAH9E5S3M74BY8KWB5"
+      }
+    ],
+    "payment_providers": [
+      {
+        "id": "manual",
+        "is_installed": true
+      }
+    ],
+    "fulfillment_providers": [
+      {
+        "id": "manual",
+        "is_installed": true
+      }
+    ]
+  }
 ]

@@ -6,8 +6,8 @@
     "dev": "nuxt dev",
     "lint:js": "eslint --ext \".ts,.vue\" --ignore-path .gitignore .",
     "lint:prettier": "prettier --check .",
-    "lint": "npm lint:js && yarn lint:prettier",
-    "lintfix": "prettier --write --list-different . && yarn lint:js --fix",
+    "lint": "npm run lint:js && yarn lint:prettier",
+    "lintfix": "prettier --write --list-different . && npm run lint:js --fix",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"

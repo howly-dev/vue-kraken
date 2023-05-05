@@ -1,13 +1,9 @@
-<template>
-
-</template>
+<template></template>
 
 <script>
 export default {
-  name: "TheFooter.vue"
-}
+  name: "TheFooter.vue",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
