@@ -1,7 +1,7 @@
 <template>
   <div class="grid px-4">
     <div v-for="product in products" class="col-3">
-        <ProductCard :product="product" />
+      <ProductCard :product="product" />
     </div>
   </div>
 </template>
@@ -9,7 +9,7 @@
 import { Product } from "@medusajs/medusa";
 
 defineProps<{
-  products: Product[]
-}>()
+  products: Product[];
+}>();
 </script>
 <style scoped></style>

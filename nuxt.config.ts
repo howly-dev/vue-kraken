@@ -1,5 +1,5 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    modules: ['nuxt-medusa', '@nuxtjs/eslint-module'],
     css: [
         "@/assets/main.scss",
         'primevue/resources/themes/saga-blue/theme.css',
@@ -10,6 +10,5 @@ export default defineNuxtConfig({
     build: {
         transpile: ['primevue']
     },
-    modules: ['nuxt-medusa'],
     ssr: false
 })
