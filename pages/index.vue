@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Button> Hello There</Button>
     <HomeHero />
     <HomeProducts :products="products" />
   </div>

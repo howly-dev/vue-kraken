@@ -8,6 +8,7 @@
     "lint:prettier": "prettier --check .",
     "lint": "npm run lint:js && yarn lint:prettier",
     "lintfix": "prettier --write --list-different . && npm run lint:js --fix",
+    "generate:theme": "sass --update theme/theme.scss:theme/theme.css && mv theme/theme.css assets/theme.css",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"

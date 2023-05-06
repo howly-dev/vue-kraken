@@ -7,3 +7,5 @@ node_modules
 .env
 dist
 .DS_Store
+theme/theme.css.map
+theme/theme.css
