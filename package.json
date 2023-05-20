@@ -21,7 +21,7 @@
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "nuxt": "^3.4.2",
+    "nuxt": "^3.5.0",
     "nuxt-medusa": "^0.4.0",
     "prettier": "^2.8.8",
     "sass": "^1.62.0",

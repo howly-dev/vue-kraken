@@ -1,1 +1,10 @@
 /* Customizations to the designer theme should be defined here */
+
+.p-card {
+  .p-card-body {
+    padding: 0 1rem !important;
+  }
+  .p-card-content {
+    padding: 0 !important;
+  }
+}
