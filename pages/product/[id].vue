@@ -26,7 +26,7 @@
         <p>{{ product?.description }}</p>
         <div>Select Size</div>
         <div>Select Color</div>
-        <Button>Add to cart</Button>
+        <Button @click="addToCart">Add to cart</Button>
         <div>
           <div>Information Component</div>
         </div>
@@ -38,16 +38,17 @@
 <script setup lang="ts">
 import Carousel from "primevue/carousel";
 import { computed, useAsyncData, useMedusaClient, useRoute } from "#imports";
+import { useCartStore } from "~/store/cart";
 
 const client = useMedusaClient();
 
 const route = useRoute();
+const { addLineItem } = useCartStore();
 const { data: product } = useAsyncData(
   `product-${route.params.id}`,
   () => client.products.retrieve(route.params?.id as string),
   {
     transform: (data) => {
-      console.log(data);
       return data?.product;
     },
   }
@@ -55,4 +56,12 @@ const { data: product } = useAsyncData(
 
 const image = computed(() => product.value?.images[0].url || "");
 const images = computed(() => product.value?.images);
+
+const addToCart = () => {
+  const item = {
+    variant_id: product.value?.variants[0].id as string,
+    quantity: 1,
+  };
+  addLineItem(item);
+};
 </script>
