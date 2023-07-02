@@ -2,6 +2,7 @@ import { Product, Region } from "@medusajs/medusa";
 import { CalculatedVariant } from "~/types/medusa";
 import { ProductPreviewType } from "~/types/global";
 import { formatAmount } from "~/utils/format-price";
+import { getPercentageDiff } from "~/utils/get-precentage-diff";
 
 const transformProductPreview = (
   product: Product,
@@ -19,7 +20,6 @@ const transformProductPreview = (
       return acc;
     }, variants[0]);
   }
-  console.log(cheapestVariant);
 
   return {
     id: product.id,

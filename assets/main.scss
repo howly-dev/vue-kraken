@@ -3,11 +3,41 @@ body {
   font-family: "CarmenSans", sans-serif;
 }
 
-.p-card {
-  .p-card-body {
-    padding: 0 1rem !important;
+// Breakpoints
+$breakpoint-xs: 576px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 992px;
+$breakpoint-lg: 1200px;
+$breakpoint-xl: 1400px;
+
+.container {
+  width: 100%;
+  max-width: 540px; /* Extra small */
+  margin: 0 auto;
+
+  @media (min-width: #{$breakpoint-xs}) {
+    max-width: 720px; /* Small */
   }
-  .p-card-content {
-    padding: 0 !important;
+
+  @media (min-width: #{$breakpoint-sm}) {
+    max-width: 960px; /* Medium */
   }
+
+  @media (min-width: #{$breakpoint-md}) {
+    max-width: 1140px; /* Large */
+  }
+
+  @media (min-width: #{$breakpoint-lg}) {
+    max-width: 1320px; /* X-Large */
+  }
+
+  @media (min-width: #{$breakpoint-xl}) {
+    max-width: 1500px; /* XX-Large */
+  }
+}
+
+.square-img-wrapper {
+  height: 0;
+  width: 100%;
+  padding-bottom: 100%;
 }

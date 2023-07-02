@@ -21,7 +21,7 @@
     "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "nuxt": "^3.4.2",
+    "nuxt": "^3.6.1",
     "nuxt-medusa": "^0.4.0",
     "prettier": "^2.8.8",
     "sass": "^1.62.0",
@@ -29,6 +29,9 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.4.11",
+    "lodash-es": "^4.17.21",
+    "pinia": "^2.1.3",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
     "primevue": "^3.27.0"

@@ -6,11 +6,23 @@
     <div class="flex">
       <div>ABOUT US</div>
       <div class="mx-4">COLLECTIONS</div>
-      <div>CART</div>
+      <div class="cursor-pointer" @click="toggleCart">
+        CART
+        <CartPreview v-model:is-visible="isCartVisible" />
+      </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "#imports";
+import CartPreview from "~/components/CartPreview.vue";
+
+const isCartVisible = ref(false);
+
+const toggleCart = () => {
+  isCartVisible.value = !isCartVisible.value;
+};
+</script>
 
 <style scoped></style>
