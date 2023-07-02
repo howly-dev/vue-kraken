@@ -9,21 +9,25 @@
         />
       </div>
     </div>
-    <div>
+    <div class="flex flex-column">
       <p class="font-medium">{{ lineItem.title }}</p>
       <div>
         <p
           v-for="variant in variants"
           :key="variant.optionName"
-          class="m-0 text-500"
+          class="m-0 text-500 text-sm"
         >
           {{ variant.optionName }} : {{ variant.option }}
         </p>
       </div>
-      <p class="mb-2">Quantity: {{ lineItem.quantity }}</p>
+      <p class="mt-auto mb-2 text-sm">Quantity: {{ lineItem.quantity }}</p>
     </div>
-    <div class="flex flex-column align-items-end justify-content-between">
-      <p class="mr-3">{{ lineItem.total }}</p>
+    <div
+      class="flex flex-column align-items-end justify-content-between ml-auto"
+    >
+      <p class="mr-3">
+        <CartPreviewItemPrice :item="lineItem" :region="cart.region" />
+      </p>
       <Button
         class="cursor-pointer"
         label="Remove"
@@ -41,6 +45,10 @@
 import { LineItem } from "@medusajs/medusa";
 import Button from "primevue/button";
 import { computed } from "#imports";
+import CartPreviewItemPrice from "~/components/CartPreviewItemPrice.vue";
+import { useCartStore } from "~/store/cart";
+
+const { cart } = useCartStore();
 
 const props = defineProps<{
   lineItem: LineItem;

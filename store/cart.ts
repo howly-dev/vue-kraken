@@ -8,12 +8,12 @@ import { useCookie, useMedusaClient } from "#imports";
 
 declare type Cart = StoreCartsRes["cart"];
 interface CartState {
-  cart?: Cart | null;
+  cart?: Cart;
   cartId: string | null;
 }
 export const useCartStore = defineStore("cart", {
   state: (): CartState => ({
-    cart: null,
+    cart: {} as Cart,
     cartId: null,
   }),
   actions: {
