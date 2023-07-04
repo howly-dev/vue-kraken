@@ -22,13 +22,51 @@
         </Carousel>
       </div>
       <div class="flex-column flex-1 ml-7">
-        <h1 class="text-4xl">{{ product?.title }}</h1>
-        <p>{{ product?.description }}</p>
-        <div>Select Size</div>
-        <div>Select Color</div>
+        <h1 class="text-4xl font-normal">{{ product?.title }}</h1>
+        <p class="text-2xl font-light">{{ product?.description }}</p>
+        <template v-for="option in product?.options">
+          <SelectButton
+            v-model="variant"
+            :options="option.values"
+            option-label="value"
+            option-value="id"
+          />
+        </template>
         <Button @click="addToCart">Add to cart</Button>
         <div>
-          <div>Information Component</div>
+          <TabView>
+            <TabPanel header="PRODUCT INFORMATION">
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </p>
+            </TabPanel>
+            <TabPanel header="SHIPPING & RETURNS">
+              <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
+                quae ab illo inventore veritatis et quasi architecto beatae
+                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
+                voluptas sit aspernatur aut odit aut fugit, sed quia
+                consequuntur magni dolores eos qui ratione voluptatem sequi
+                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
+                modi.
+              </p>
+            </TabPanel>
+          </TabView>
+
+          <div class="card flex justify-content-center">
+            <SelectButton
+              v-model="value"
+              :options="options"
+              aria-labelledby="basic"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -37,8 +75,15 @@
 
 <script setup lang="ts">
 import Carousel from "primevue/carousel";
+import TabView from "primevue/tabview";
+import TabPanel from "primevue/tabpanel";
+import SelectButton from "primevue/selectbutton";
+import { ref } from "vue";
 import { computed, useAsyncData, useMedusaClient, useRoute } from "#imports";
 import { useCartStore } from "~/store/cart";
+
+const value = ref("off");
+const options = ref(["Off", "On"]);
 
 const client = useMedusaClient();
 
@@ -53,6 +98,8 @@ const { data: product } = useAsyncData(
     },
   }
 );
+
+const variant = ref(null);
 
 const image = computed(() => product.value?.images[0].url || "");
 const images = computed(() => product.value?.images);
