@@ -8,5 +8,5 @@ import { useCartStore } from "~/store/cart";
 
 const { initCart } = useCartStore();
 
-initCart();
+await initCart();
 </script>

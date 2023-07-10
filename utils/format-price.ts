@@ -57,7 +57,6 @@ type ConvertToLocaleParams = {
   maximumFractionDigits?: number;
   locale?: string;
 };
-
 /**
  * Takes a product variant and a region, and converts the variant's price to a localized decimal format
  */
@@ -143,7 +142,7 @@ export const computeAmount = ({
   return amountWithTaxes;
 };
 
-type FormatAmountParams = {
+export type FormatAmountParams = {
   amount: number | null;
   region: RegionInfo;
   includeTaxes?: boolean;

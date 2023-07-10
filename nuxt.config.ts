@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   css: [
     "@/assets/main.scss",
     "@/assets/theme.css",
+    "primevue/resources/primevue.min.css",
     "primeicons/primeicons.css",
     "primeflex/primeflex.css",
   ],

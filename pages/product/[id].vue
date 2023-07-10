@@ -24,49 +24,109 @@
       <div class="flex-column flex-1 ml-7">
         <h1 class="text-4xl font-normal">{{ product?.title }}</h1>
         <p class="text-2xl font-light">{{ product?.description }}</p>
-        <template v-for="option in product?.options">
-          <SelectButton
-            v-model="variant"
-            :options="option.values"
-            option-label="value"
-            option-value="id"
-          />
-        </template>
-        <Button @click="addToCart">Add to cart</Button>
+        <div class="my-6">
+          <template v-for="option in product?.options" :key="option.id">
+            <div>
+              <label :for="'variant_' + option.title" class="text-sm">
+                {{ option.title }}
+              </label>
+              <SelectButton
+                :id="'variant_' + option.title"
+                v-model="variant"
+                class="mt-2"
+                :options="option.values"
+                option-label="value"
+                option-value="variant_id"
+              />
+            </div>
+          </template>
+        </div>
+        <p class="text-3xl mt-6 mb-5">
+          <template v-if="selectedPrice">
+            <template v-if="selectedPrice.priceType === 'sale'">
+              <s class="text-color-secondary mr-4">{{
+                selectedPrice.originalPrice
+              }}</s>
+              <span>{{ selectedPrice.calculatedPrice }}</span>
+            </template>
+            <template v-else>
+              {{ selectedPrice.calculatedPrice }}
+            </template>
+          </template>
+        </p>
+        <Button
+          class="w-full flex justify-content-center mb-7"
+          :disabled="addToCartDisabled"
+          @click="addToCart"
+          >Add to cart</Button
+        >
         <div>
           <TabView>
             <TabPanel header="PRODUCT INFORMATION">
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </p>
+              <div class="grid">
+                <div class="col-6">
+                  <span class="font-semibold">Material</span>
+                  <p>{{ product?.material ? product.material : "-" }}</p>
+                </div>
+                <div class="col-6">
+                  <span class="font-semibold">Country of origin</span>
+                  <p>
+                    {{ product?.origin_country ? product.origin_country : "-" }}
+                  </p>
+                </div>
+                <div class="col-6">
+                  <span class="font-semibold">Type</span>
+                  <p>{{ product?.type ? product.type.value : "-" }}</p>
+                </div>
+                <div class="col-6">
+                  <span class="font-semibold">Weight</span>
+                  <p>{{ product?.weight ? `${product.weight} g` : "-" }}</p>
+                </div>
+                <div class="col-6">
+                  <span class="font-semibold">Dimensions</span>
+                  <p>
+                    {{
+                      product?.length && product?.width && product?.height
+                        ? `${product.length}L x ${product.width}W x ${product.height}H`
+                        : "-"
+                    }}
+                  </p>
+                </div>
+              </div>
             </TabPanel>
             <TabPanel header="SHIPPING & RETURNS">
-              <p>
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              <div class="">
+                <div>
+                  <div>
+                    <span class="font-semibold">Fast delivery</span>
+                    <p>
+                      Your package will arrive in 3-5 business days at your pick
+                      up location or in the comfort of your home.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-x-2">
+                  <div>
+                    <span class="font-semibold">Simple exchanges</span>
+                    <p>
+                      Is the fit not quite right? No worries - we&apos;ll
+                      exchange your product for a new one.
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <span class="font-semibold">Easy returns</span>
+                    <p>
+                      Just return your product and we&apos;ll refund your money.
+                      No questions asked – we&apos;ll do our best to make sure
+                      your return is hassle-free.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </TabPanel>
           </TabView>
-
-          <div class="card flex justify-content-center">
-            <SelectButton
-              v-model="value"
-              :options="options"
-              aria-labelledby="basic"
-            />
-          </div>
         </div>
       </div>
     </div>
@@ -78,35 +138,41 @@ import Carousel from "primevue/carousel";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import SelectButton from "primevue/selectbutton";
-import { ref } from "vue";
+import { ref, toValue } from "vue";
+import { storeToRefs } from "pinia";
 import { computed, useAsyncData, useMedusaClient, useRoute } from "#imports";
 import { useCartStore } from "~/store/cart";
-
-const value = ref("off");
-const options = ref(["Off", "On"]);
+import { useProductPrice } from "~/composables/useProductPrice";
 
 const client = useMedusaClient();
+const { addLineItem, cartId } = useCartStore();
+const { cart } = storeToRefs(useCartStore());
+const variant = ref(null);
 
 const route = useRoute();
-const { addLineItem } = useCartStore();
 const { data: product } = useAsyncData(
   `product-${route.params.id}`,
-  () => client.products.retrieve(route.params?.id as string),
+  () => client.products.retrieve(`${route.params?.id}?cart_id=${cartId}`),
   {
     transform: (data) => {
       return data?.product;
     },
   }
 );
+const price = useProductPrice(product, variant, cart);
+const selectedPrice = computed(() => {
+  const { variantPrice, cheapestPrice } = price;
+  return toValue(variantPrice) || toValue(cheapestPrice) || null;
+});
 
-const variant = ref(null);
-
-const image = computed(() => product.value?.images[0].url || "");
+const image = computed(() => product.value?.images?.[0].url || "");
 const images = computed(() => product.value?.images);
+
+const addToCartDisabled = computed(() => variant.value === null);
 
 const addToCart = () => {
   const item = {
-    variant_id: product.value?.variants[0].id as string,
+    variant_id: variant.value as string,
     quantity: 1,
   };
   addLineItem(item);
