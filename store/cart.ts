@@ -5,6 +5,7 @@ import {
 } from "@medusajs/medusa";
 import { get } from "lodash-es/lodash";
 import { useCookie, useMedusaClient } from "#imports";
+import { useRegionStore } from "~/store/region";
 
 declare type Cart = StoreCartsRes["cart"];
 interface CartState {
@@ -20,16 +21,27 @@ export const useCartStore = defineStore("cart", {
     async initCart() {
       const client = useMedusaClient();
       const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      const { syncRegion } = useRegionStore();
 
       if (!cartId.value) {
+        // TODO Create with getRegionLocal, move to seperate create cart function
         const { cart } = await client.carts.create();
         cartId.value = cart.id;
       } else {
-        const { cart } = await client.carts.retrieve(cartId.value as string);
+        const { cart }: { cart: Cart } = await client.carts.retrieve(
+          cartId.value as string
+        );
         this.cart = cart as any;
-        this.cartId = cart.id;
+        // Argument type Cart is not assignable to parameter type Cart, for real?
+        syncRegion(cart as any);
       }
     },
+    setCart(cart: Cart) {
+      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      this.cart = cart as any;
+      cartId.value = cart.id;
+    },
+    syncCart() {},
     pay: () => {},
     startCheckout: () => {},
     completeCheckout: () => {},
@@ -63,6 +75,9 @@ export const useCartStore = defineStore("cart", {
   getters: {
     lineItems(state) {
       return get(state, ["cart", "items"], []);
+    },
+    cartId(state) {
+      return state?.cart?.id;
     },
   },
 });
