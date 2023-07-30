@@ -4,6 +4,7 @@ import {
   StorePostCartsCartLineItemsReq,
 } from "@medusajs/medusa";
 import { get } from "lodash-es/lodash";
+import { toValue } from "vue";
 import { useCookie, useMedusaClient } from "#imports";
 import { useRegionStore } from "~/store/region";
 
@@ -20,20 +21,28 @@ export const useCartStore = defineStore("cart", {
   actions: {
     async initCart() {
       const client = useMedusaClient();
-      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
-      const { syncRegion } = useRegionStore();
+      const { syncRegion, getRegionLocal, deleteRegionLocal } =
+        useRegionStore();
+      const cartId = this.getCartLocal();
 
-      if (!cartId.value) {
-        // TODO Create with getRegionLocal, move to seperate create cart function
-        const { cart } = await client.carts.create();
-        cartId.value = cart.id;
-      } else {
+      if (cartId) {
         const { cart }: { cart: Cart } = await client.carts.retrieve(
-          cartId.value as string
+          cartId as string
         );
+
+        if (!cart || cart.completed_at) {
+          this.deleteCartLocal();
+          deleteRegionLocal();
+          await this.createNewCart();
+          return;
+        }
+
         this.cart = cart as any;
         // Argument type Cart is not assignable to parameter type Cart, for real?
         syncRegion(cart as any);
+      } else {
+        const region = getRegionLocal();
+        await this.createNewCart(region?.regionId);
       }
     },
     setCart(cart: Cart) {
@@ -41,7 +50,25 @@ export const useCartStore = defineStore("cart", {
       this.cart = cart as any;
       cartId.value = cart.id;
     },
-    syncCart() {},
+    async createNewCart(regionId?: string) {
+      const client = useMedusaClient();
+      const { syncRegion } = useRegionStore();
+
+      const { cart } = await client.carts.create({ region_id: regionId });
+
+      this.setCart(cart);
+      syncRegion(cart as any);
+
+      return { cart };
+    },
+    deleteCartLocal() {
+      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      cartId.value = null;
+    },
+    getCartLocal() {
+      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      return toValue(cartId);
+    },
     pay: () => {},
     startCheckout: () => {},
     completeCheckout: () => {},

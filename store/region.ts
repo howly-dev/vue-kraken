@@ -36,7 +36,13 @@ export const useRegionStore = defineStore("region", {
     },
     getRegionLocal() {
       const region = useCookie("region", { maxAge: 60 * 60 * 24 * 365 });
-      return toValue(region) ?? null;
+      return (
+        (toValue(region) as { regionId: string; countryCode: string }) ?? null
+      );
+    },
+    deleteRegionLocal() {
+      const region = useCookie("region", { maxAge: 60 * 60 * 24 * 365 });
+      region.value = null;
     },
     syncRegion(cart: Cart) {
       const cartRegion = {
@@ -50,10 +56,9 @@ export const useRegionStore = defineStore("region", {
       const { regionId, countryCode } = this.getRegionLocal() || cartRegion;
 
       // The function compares the regionId obtained from local storage (or default) with the cart.region.id passed
-      // as an argument to the ensureRegion function. If they are not the same, it means that the cart's region
+      // as an argument to the syncRegion function. If they are not the same, it means that the cart's region
       // and the user's selected region are different, and an update is needed.
       if (regionId !== cart.region.id) {
-        console.log("regionId !== cart.region.id");
         this.setRegion(cart.region.id, countryCode);
       }
       this.setRegionLocal(regionId, countryCode);
