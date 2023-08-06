@@ -14,6 +14,12 @@
           @line-item:remove="removeLineItem(item.id)"
         />
       </div>
+      <div v-if="!items.length" class="my-4">Cart is empty</div>
+      <Button
+        class="w-full flex justify-content-center mb-7"
+        @click="redirectToCart"
+        >Go to checkout</Button
+      >
     </div>
   </Dialog>
 </template>
@@ -24,7 +30,7 @@ import { storeToRefs } from "pinia";
 import { LineItem } from "@medusajs/medusa/dist/models/line-item";
 import { useCartStore } from "../store/cart";
 import CartPreviewItem from "~/components/CartPreviewItem";
-import { computed, toRef } from "#imports";
+import { computed, toRef, useRouter } from "#imports";
 import useEnrichedLineItems from "~/composables/useEnrichLineItems";
 
 const props = defineProps<{
@@ -43,6 +49,12 @@ const visible = computed({
 });
 
 const { cartId, lineItems } = storeToRefs(useCartStore());
+const router = useRouter();
 const { removeLineItem } = useCartStore();
 const items = useEnrichedLineItems(toRef(lineItems) as LineItem[], cartId);
+
+const redirectToCart = () => {
+  visible.value = false;
+  router.push({ path: "/cart" });
+};
 </script>
