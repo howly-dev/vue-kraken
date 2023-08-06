@@ -4,7 +4,9 @@ import {
   StorePostCartsCartLineItemsReq,
 } from "@medusajs/medusa";
 import { get } from "lodash-es/lodash";
+import { toValue } from "vue";
 import { useCookie, useMedusaClient } from "#imports";
+import { useRegionStore } from "~/store/region";
 
 declare type Cart = StoreCartsRes["cart"];
 interface CartState {
@@ -19,16 +21,53 @@ export const useCartStore = defineStore("cart", {
   actions: {
     async initCart() {
       const client = useMedusaClient();
-      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      const { syncRegion, getRegionLocal, deleteRegionLocal } =
+        useRegionStore();
+      const cartId = this.getCartLocal();
 
-      if (!cartId.value) {
-        const { cart } = await client.carts.create();
-        cartId.value = cart.id;
-      } else {
-        const { cart } = await client.carts.retrieve(cartId.value as string);
+      if (cartId) {
+        const { cart }: { cart: Cart } = await client.carts.retrieve(
+          cartId as string
+        );
+
+        if (!cart || cart.completed_at) {
+          this.deleteCartLocal();
+          deleteRegionLocal();
+          await this.createNewCart();
+          return;
+        }
+
         this.cart = cart as any;
-        this.cartId = cart.id;
+        // Argument type Cart is not assignable to parameter type Cart, for real?
+        syncRegion(cart as any);
+      } else {
+        const region = getRegionLocal();
+        await this.createNewCart(region?.regionId);
       }
+    },
+    setCart(cart: Cart) {
+      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      this.cart = cart as any;
+      cartId.value = cart.id;
+    },
+    async createNewCart(regionId?: string) {
+      const client = useMedusaClient();
+      const { syncRegion } = useRegionStore();
+
+      const { cart } = await client.carts.create({ region_id: regionId });
+
+      this.setCart(cart);
+      syncRegion(cart as any);
+
+      return { cart };
+    },
+    deleteCartLocal() {
+      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      cartId.value = null;
+    },
+    getCartLocal() {
+      const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
+      return toValue(cartId);
     },
     pay: () => {},
     startCheckout: () => {},
@@ -63,6 +102,9 @@ export const useCartStore = defineStore("cart", {
   getters: {
     lineItems(state) {
       return get(state, ["cart", "items"], []);
+    },
+    cartId(state) {
+      return state?.cart?.id;
     },
   },
 });
