@@ -2,7 +2,9 @@
   <div
     class="w-full h-5rem flex justify-content-between px-4 align-items-center border-bottom-1"
   >
-    <div>HOWLY</div>
+    <NuxtLink to="/" class="cursor-pointer no-underline">
+      <div>HOWLY</div>
+    </NuxtLink>
     <div class="flex">
       <div>ABOUT US</div>
       <div class="mx-4">COLLECTIONS</div>

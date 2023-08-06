@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex gap-3 my-3">
-    <div class="w-4 flex align-items-center">
+    <div class="w-13rem flex align-items-center">
       <div class="square-img-wrapper bg-black-alpha-10 overflow-hidden">
         <img
           alt="user header"
