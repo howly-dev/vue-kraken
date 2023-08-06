@@ -16,3 +16,6 @@ jobs:
 
       - name: Lint code
         run: npm run lint
+
+      - name: Typescript check
+        run: npm run lint:tsc
