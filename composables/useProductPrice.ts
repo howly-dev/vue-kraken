@@ -1,9 +1,13 @@
 import { toValue } from "vue";
-import { formatAmount, FormatAmountParams } from "~/utils/format-price";
+import { Cart, formatAmount, FormatAmountParams } from "~/utils/format-price";
 import { computed } from "#imports";
-import { CalculatedVariant } from "~/types/medusa";
+import { CalculatedVariant, Product } from "~/types/medusa";
 
-export const useProductPrice = (product, variantId, cart) => {
+export const useProductPrice = (
+  product: Ref<Product>,
+  variantId: Ref<string>,
+  cart: Ref<Cart>
+) => {
   const getPercentageDiff = (original: number, calculated: number) => {
     const diff = original - calculated;
     const decrease = (diff / original) * 100;

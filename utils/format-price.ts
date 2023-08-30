@@ -3,7 +3,6 @@ import {
   Region,
   StoreCartsRes,
 } from "@medusajs/medusa";
-import { ProductVariantInfo, RegionInfo } from "../types";
 /// /////////////////////////////////////////////////
 
 /// /////////// medusa-react/types.ts /////////////
@@ -112,7 +111,7 @@ export const getVariantPrice = (
   region: RegionInfo
 ) => {
   const price = variant?.prices?.find(
-    (p) =>
+    (p: any) =>
       p.currency_code.toLowerCase() === region?.currency_code?.toLowerCase()
   );
 

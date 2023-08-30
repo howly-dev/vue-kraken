@@ -1,6 +1,6 @@
-import { ref, watchEffect, toValue } from "vue";
-import { StoreGetProductsParams } from "@medusajs/medusa";
-import omit from "lodash-es/omit.js";
+import { ref, watchEffect, toValue, Ref } from "vue";
+import { StoreGetProductsParams, LineItem, Product } from "@medusajs/medusa";
+import { omit } from "lodash-es";
 import { useMedusaClient } from "#imports";
 
 /**
@@ -8,9 +8,9 @@ import { useMedusaClient } from "#imports";
  * If you pass an array of line items, it will return those line items with enriched data.
  * Otherwise, it will return the line items from the current cart.
  */
-const useEnrichedLineItems = (lineItems = [], cartId) => {
+const useEnrichedLineItems = (lineItems: LineItem[], cartId: Ref<string>) => {
   const client = useMedusaClient();
-  const enrichedItems = ref([]);
+  const enrichedItems: Ref<Omit<LineItem, "beforeInsert">[]> = ref([]);
   const queryParams = ref({});
 
   watchEffect(async () => {
@@ -21,7 +21,7 @@ const useEnrichedLineItems = (lineItems = [], cartId) => {
 
     const { products } = toValue(lineItems).length
       ? await client.products.list(queryParams.value as StoreGetProductsParams)
-      : [];
+      : { products: [] };
 
     enrichedItems.value = [];
     for (const item of toValue(lineItems)) {
@@ -42,9 +42,10 @@ const useEnrichedLineItems = (lineItems = [], cartId) => {
 
       enrichedItems.value.push({
         ...item,
+        // @ts-ignore
         variant: {
           ...variant,
-          product: omit(product, "variants"),
+          product: omit(product, "variants") as Product,
         },
       });
     }
