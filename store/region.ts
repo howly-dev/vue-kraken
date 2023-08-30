@@ -35,10 +35,11 @@ export const useRegionStore = defineStore("region", {
       region.value = JSON.stringify({ regionId, countryCode });
     },
     getRegionLocal() {
-      const region = useCookie("region", { maxAge: 60 * 60 * 24 * 365 });
-      return (
-        (toValue(region) as { regionId: string; countryCode: string }) ?? null
+      const region: Ref<{ regionId: string; countryCode: string }> = useCookie(
+        "region",
+        { maxAge: 60 * 60 * 24 * 365 }
       );
+      return toValue(region) ?? null;
     },
     deleteRegionLocal() {
       const region = useCookie("region", { maxAge: 60 * 60 * 24 * 365 });

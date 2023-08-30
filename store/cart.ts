@@ -3,7 +3,7 @@ import {
   StoreCartsRes,
   StorePostCartsCartLineItemsReq,
 } from "@medusajs/medusa";
-import { get } from "lodash-es/lodash";
+import { get } from "lodash-es";
 import { toValue } from "vue";
 import { useCookie, useMedusaClient } from "#imports";
 import { useRegionStore } from "~/store/region";
