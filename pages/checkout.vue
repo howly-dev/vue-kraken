@@ -2,7 +2,11 @@
   <div class="container mt-7">
     <CartEmpty v-if="!lineItems.length" />
     <NuxtLayout name="checkout">
-      <template #main> Checkout Form </template>
+      <template #main>
+        <CheckoutShippingForm />
+        <CheckoutDeliveryForm />
+        <CheckoutPaymentForm />
+      </template>
       <template #sidebar>
         <CheckoutSummary :cart="cart" />
         <Button
@@ -19,6 +23,8 @@
 import { storeToRefs } from "pinia";
 import { useCartStore } from "~/store/cart";
 import CheckoutSummary from "~/components/CheckoutSummary.vue";
+import CheckoutDeliveryForm from "~/components/CheckoutDeliveryForm.vue";
+import CheckoutPaymentForm from "~/components/CheckoutPaymentForm.vue";
 
-const { cart } = storeToRefs(useCartStore());
+const { cart, lineItems } = storeToRefs(useCartStore());
 </script>

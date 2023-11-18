@@ -2,9 +2,11 @@ import { defineStore } from "pinia";
 import {
   StoreCartsRes,
   StorePostCartsCartLineItemsReq,
+  StorePostCartsCartReq,
 } from "@medusajs/medusa";
 import { get } from "lodash-es";
 import { toValue } from "vue";
+import { AddressPayload } from "@medusajs/types";
 import { useCookie, useMedusaClient } from "#imports";
 import { useRegionStore } from "~/store/region";
 
@@ -97,6 +99,19 @@ export const useCartStore = defineStore("cart", {
       if (cart) {
         this.cart = cart as any;
       }
+    },
+    /**
+     * Method that sets the addresses and email on the cart.
+     */
+    async setAddresses(data: AddressPayload & { email?: string }) {
+      delete data.email;
+      const client = useMedusaClient();
+      const payload: StorePostCartsCartReq = {
+        shipping_address: { ...data },
+      };
+
+      const { cart } = await client.carts.update(this.cartId, payload);
+      this.setCart(cart);
     },
   },
   getters: {
