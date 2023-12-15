@@ -11,4 +11,12 @@ export default defineNuxtConfig({
     transpile: ["primevue"],
   },
   ssr: false,
+  vite: {
+    vue: {
+      script: {
+        defineModel: true,
+        propsDestructure: true,
+      },
+    },
+  },
 });

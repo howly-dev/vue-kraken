@@ -83,39 +83,49 @@
     </div>
     <div class="field col-12">
       <InputText
-        v-model="formData.country_code"
+        v-model="formData.phone"
         type="text"
         placeholder="Phone"
         class="w-full"
       />
     </div>
   </div>
-  <Button class="my-4" @click="handleSubmit"> Continue to delivery </Button>
+  <Button class="my-4" @click="handleSubmit">Save</Button>
 </template>
 <script lang="ts" setup>
 import InputText from "primevue/inputtext";
 import Avatar from "primevue/avatar";
+import { Cart } from "@medusajs/medusa";
 import { reactive } from "#imports";
 import { useCartStore } from "~/store/cart";
 
+const props = defineProps<{
+  cart: Cart | undefined | null;
+  modelValue: boolean;
+}>();
+
+const emit = defineEmits(["update:modelValue"]);
+
 const defaultFormData = () => ({
-  email: "",
-  company: "",
-  first_name: "",
-  last_name: "",
-  address_1: "",
-  address_2: "",
-  city: "",
-  country_code: "",
-  province: "",
-  postal_code: "",
-  phone: "",
+  email: props.cart?.email ?? "",
+  company: props.cart?.shipping_address?.company ?? "",
+  first_name: props.cart?.shipping_address?.first_name ?? "",
+  last_name: props.cart?.shipping_address?.last_name ?? "",
+  address_1: props.cart?.shipping_address?.address_1 ?? "",
+  address_2: props.cart?.shipping_address?.address_2 ?? "",
+  city: props.cart?.shipping_address?.city ?? "",
+  country_code: props.cart?.shipping_address?.country_code ?? "",
+  province: props.cart?.shipping_address?.province ?? "",
+  postal_code: props.cart?.shipping_address?.postal_code ?? "",
+  phone: props.cart?.shipping_address?.phone ?? "",
 });
 
 const formData = reactive(defaultFormData());
 
 const handleSubmit = () => {
-  setAddresses(formData);
+  const { email, ...addressPayload } = formData;
+  setAddresses(addressPayload, email);
+  emit("update:modelValue", false);
 };
 
 const { setAddresses } = useCartStore();

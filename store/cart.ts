@@ -12,7 +12,7 @@ import { useRegionStore } from "~/store/region";
 
 declare type Cart = StoreCartsRes["cart"];
 interface CartState {
-  cart?: Cart;
+  cart: Cart;
   cartId: string | null;
 }
 export const useCartStore = defineStore("cart", {
@@ -103,10 +103,10 @@ export const useCartStore = defineStore("cart", {
     /**
      * Method that sets the addresses and email on the cart.
      */
-    async setAddresses(data: AddressPayload & { email?: string }) {
-      delete data.email;
+    async setAddresses(data: AddressPayload, email: string) {
       const client = useMedusaClient();
       const payload: StorePostCartsCartReq = {
+        email,
         shipping_address: { ...data },
       };
 

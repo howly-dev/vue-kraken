@@ -3,8 +3,18 @@
     <CartEmpty v-if="!lineItems.length" />
     <NuxtLayout name="checkout">
       <template #main>
-        <CheckoutShippingForm />
-        <CheckoutDeliveryForm />
+        <CheckoutShippingForm v-if="cartEdit" v-model="cartEdit" :cart="cart" />
+        <CheckoutShippingPreview
+          v-if="!cartEdit"
+          v-model="cartEdit"
+          :shipping-address="cart?.shipping_address"
+          :email="cart?.email"
+        />
+        <CheckoutDeliveryForm
+          :shipping-methods="shippingMethods"
+          :model-value="selectedShippingMethod"
+          @update:model-value="updateShippingMethod"
+        />
         <CheckoutPaymentForm />
       </template>
       <template #sidebar>
@@ -25,6 +35,12 @@ import { useCartStore } from "~/store/cart";
 import CheckoutSummary from "~/components/CheckoutSummary.vue";
 import CheckoutDeliveryForm from "~/components/CheckoutDeliveryForm.vue";
 import CheckoutPaymentForm from "~/components/CheckoutPaymentForm.vue";
+import CheckoutShippingPreview from "~/components/CheckoutShippingPreview.vue";
+import { useShippingMethods } from "~/composables/useShippingMethods";
 
 const { cart, lineItems } = storeToRefs(useCartStore());
+const cartEdit = ref(cart?.value?.shipping_address === null);
+
+const { updateShippingMethod, shippingMethods, selectedShippingMethod } =
+  useShippingMethods(cart);
 </script>
