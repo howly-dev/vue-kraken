@@ -113,27 +113,31 @@ export const useCartStore = defineStore("cart", {
       const { cart } = await client.carts.update(this.cartId, payload);
       this.setCart(cart);
     },
+    async initPaymentSession() {
+      const client = useMedusaClient();
+      if (
+        this.cart?.id &&
+        !this.cart.payment_sessions?.length &&
+        this.cart?.items?.length
+      ) {
+        const { cart } = await client.carts.createPaymentSessions(
+          this.cart?.id as string
+        );
+
+        if (!cart) {
+          setTimeout(this.initPaymentSession, 500);
+        } else {
+          this.setCart(cart);
+        }
+      }
+    },
   },
   getters: {
     lineItems(state) {
       return get(state, ["cart", "items"], []);
     },
-    cartId(state) {
-      return state?.cart?.id;
+    paymentSessions(state) {
+      return get(state, ["cart", "payment_sessions"], []);
     },
   },
 });
-
-// setCart: (cart: Cart) => void;
-// pay: ReturnType<typeof useSetPaymentSession>;
-// createCart: ReturnType<typeof useCreateCart>;
-// startCheckout: ReturnType<typeof useCreatePaymentSession>;
-// completeCheckout: ReturnType<typeof useCompleteCart>;
-// updateCart: ReturnType<typeof useUpdateCart>;
-// addShippingMethod: ReturnType<typeof useAddShippingMethodToCart>;
-// totalItems: number;
-
-// {
-//   variant_id: variantId,
-//       quantity: quantity,
-// },

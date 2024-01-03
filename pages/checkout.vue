@@ -15,7 +15,11 @@
           :model-value="selectedShippingMethod"
           @update:model-value="updateShippingMethod"
         />
-        <CheckoutPaymentForm />
+        <CheckoutPaymentForm
+          v-model="paymentSession"
+          :payment-sessions="paymentSessions"
+          @update:model-value="setPaymentSession"
+        />
       </template>
       <template #sidebar>
         <CheckoutSummary :cart="cart" />
@@ -38,9 +42,27 @@ import CheckoutPaymentForm from "~/components/CheckoutPaymentForm.vue";
 import CheckoutShippingPreview from "~/components/CheckoutShippingPreview.vue";
 import { useShippingMethods } from "~/composables/useShippingMethods";
 
-const { cart, lineItems } = storeToRefs(useCartStore());
+const { cart, lineItems, paymentSessions } = storeToRefs(useCartStore());
+const { initPaymentSession } = useCartStore();
 const cartEdit = ref(cart?.value?.shipping_address === null);
+
+// TODO Run when line items change ??
+initPaymentSession();
 
 const { updateShippingMethod, shippingMethods, selectedShippingMethod } =
   useShippingMethods(cart);
+
+const paymentSession = ref(cart?.value?.payment_session?.provider_id);
+
+const setPaymentSession = async (session: string) => {
+  const client = useMedusaClient();
+
+  if (cart) {
+    await client.carts.setPaymentSession(cart.value.id, {
+      provider_id: session,
+    });
+
+    paymentSession.value = session;
+  }
+};
 </script>
