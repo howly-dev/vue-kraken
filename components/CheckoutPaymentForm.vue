@@ -38,7 +38,6 @@ import RadioButton from "primevue/radiobutton";
 
 defineProps<{
   paymentSessions: PaymentSession[];
-  selectedPaymentSession: PaymentSession | null;
 }>();
 
 const PaymentInfoMap: Record<string, { title: string; description: string }> = {

@@ -96,11 +96,12 @@
 import InputText from "primevue/inputtext";
 import Avatar from "primevue/avatar";
 import { Cart } from "@medusajs/medusa";
+import { UnwrapRef } from "vue";
 import { reactive } from "#imports";
 import { useCartStore } from "~/store/cart";
 
 const props = defineProps<{
-  cart: Cart | undefined | null;
+  cart: UnwrapRef<Cart> | UnwrapRef<UnwrapRef<Cart>> | undefined | null;
   modelValue: boolean;
 }>();
 

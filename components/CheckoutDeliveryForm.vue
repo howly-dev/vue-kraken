@@ -31,8 +31,8 @@ import Avatar from "primevue/avatar";
 import RadioButton from "primevue/radiobutton";
 
 type ShippingOption = {
-  value: string;
-  label: string;
+  value: string | undefined;
+  label: string | undefined;
   price: string;
 };
 

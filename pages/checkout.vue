@@ -3,11 +3,15 @@
     <CartEmpty v-if="!lineItems.length" />
     <NuxtLayout name="checkout">
       <template #main>
-        <CheckoutShippingForm v-if="cartEdit" v-model="cartEdit" :cart="cart" />
-        <CheckoutShippingPreview
-          v-if="!cartEdit"
+        <CheckoutShippingForm
+          v-if="isAddressFormActive"
           v-model="cartEdit"
-          :shipping-address="cart?.shipping_address"
+          :cart="cart"
+        />
+        <CheckoutShippingPreview
+          v-if="!isAddressFormActive"
+          v-model="isAddressFormActive"
+          :shipping-address="cart.shipping_address as Address"
           :email="cart?.email"
         />
         <CheckoutDeliveryForm
@@ -16,9 +20,9 @@
           @update:model-value="updateShippingMethod"
         />
         <CheckoutPaymentForm
-          v-model="paymentSession"
+          v-model="providerId"
           :payment-sessions="paymentSessions"
-          @update:model-value="setPaymentSession"
+          @update:model-value="(id) => setPayment(id, setPaymentSession)"
         />
       </template>
       <template #sidebar>
@@ -26,7 +30,7 @@
         <Button
           class="w-full flex justify-content-center mb-7"
           @click="() => {}"
-          >Go to shipping</Button
+          >Checkout</Button
         >
       </template>
     </NuxtLayout>
@@ -35,34 +39,19 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import { Address } from "@medusajs/medusa";
 import { useCartStore } from "~/store/cart";
-import CheckoutSummary from "~/components/CheckoutSummary.vue";
-import CheckoutDeliveryForm from "~/components/CheckoutDeliveryForm.vue";
-import CheckoutPaymentForm from "~/components/CheckoutPaymentForm.vue";
-import CheckoutShippingPreview from "~/components/CheckoutShippingPreview.vue";
 import { useShippingMethods } from "~/composables/useShippingMethods";
+import { usePaymentSession } from "~/composables/usePaymentSession";
 
 const { cart, lineItems, paymentSessions } = storeToRefs(useCartStore());
-const { initPaymentSession } = useCartStore();
-const cartEdit = ref(cart?.value?.shipping_address === null);
+const { initPaymentSession, setPaymentSession } = useCartStore();
+const isAddressFormActive = ref(cart?.value?.shipping_address === null);
 
-// TODO Run when line items change ??
 initPaymentSession();
 
 const { updateShippingMethod, shippingMethods, selectedShippingMethod } =
   useShippingMethods(cart);
 
-const paymentSession = ref(cart?.value?.payment_session?.provider_id);
-
-const setPaymentSession = async (session: string) => {
-  const client = useMedusaClient();
-
-  if (cart) {
-    await client.carts.setPaymentSession(cart.value.id, {
-      provider_id: session,
-    });
-
-    paymentSession.value = session;
-  }
-};
+const { setPayment, providerId } = usePaymentSession(cart);
 </script>

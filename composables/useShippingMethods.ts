@@ -1,8 +1,10 @@
 import { Cart, Region } from "@medusajs/medusa";
-import { Ref } from "vue";
+import { Ref, UnwrapRef } from "vue";
 import { useAsyncData } from "#imports";
 
-export function useShippingMethods(cart: Ref<Cart>) {
+export function useShippingMethods(
+  cart: Ref<UnwrapRef<Cart>> | Ref<UnwrapRef<UnwrapRef<Cart>>>
+) {
   const client = useMedusaClient();
   const { data } = useAsyncData(
     `shipping-options:${cart.value.id}`,

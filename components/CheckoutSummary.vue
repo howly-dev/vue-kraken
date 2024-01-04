@@ -41,11 +41,12 @@
 </template>
 <script setup lang="ts">
 import { Cart } from "@medusajs/medusa";
+import { UnwrapRef } from "vue";
 import { formatAmount, FormatAmountParams } from "~/utils/format-price";
 import { toRefs } from "#imports";
 
 const props = defineProps<{
-  cart: Cart;
+  cart: UnwrapRef<Cart> | UnwrapRef<UnwrapRef<Cart>>;
 }>();
 
 const {

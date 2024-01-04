@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from "primevue/button";
-import { Address } from "@medusajs/medusa/dist/models/address";
+import { Address } from "@medusajs/medusa";
 
 const props = defineProps<{
   shippingAddress: Address | undefined | null;

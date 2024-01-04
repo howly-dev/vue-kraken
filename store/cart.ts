@@ -7,6 +7,8 @@ import {
 import { get } from "lodash-es";
 import { toValue } from "vue";
 import { AddressPayload } from "@medusajs/types";
+import { PaymentSession } from "@medusajs/medusa/dist/models/payment-session";
+import { LineItem } from "@medusajs/medusa/dist/models/line-item";
 import { useCookie, useMedusaClient } from "#imports";
 import { useRegionStore } from "~/store/region";
 
@@ -39,9 +41,9 @@ export const useCartStore = defineStore("cart", {
           return;
         }
 
-        this.cart = cart as any;
+        this.cart = cart;
         // Argument type Cart is not assignable to parameter type Cart, for real?
-        syncRegion(cart as any);
+        syncRegion(cart);
       } else {
         const region = getRegionLocal();
         await this.createNewCart(region?.regionId);
@@ -49,7 +51,7 @@ export const useCartStore = defineStore("cart", {
     },
     setCart(cart: Cart) {
       const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
-      this.cart = cart as any;
+      this.cart = cart;
       cartId.value = cart.id;
     },
     async createNewCart(regionId?: string) {
@@ -85,7 +87,7 @@ export const useCartStore = defineStore("cart", {
       );
 
       if (cart) {
-        this.cart = cart as any;
+        this.cart = cart;
       }
     },
     async removeLineItem(itemId: string) {
@@ -97,12 +99,9 @@ export const useCartStore = defineStore("cart", {
       );
 
       if (cart) {
-        this.cart = cart as any;
+        this.cart = cart;
       }
     },
-    /**
-     * Method that sets the addresses and email on the cart.
-     */
     async setAddresses(data: AddressPayload, email: string) {
       const client = useMedusaClient();
       const payload: StorePostCartsCartReq = {
@@ -110,7 +109,10 @@ export const useCartStore = defineStore("cart", {
         shipping_address: { ...data },
       };
 
-      const { cart } = await client.carts.update(this.cartId, payload);
+      const { cart } = await client.carts.update(
+        this.cartId as string,
+        payload
+      );
       this.setCart(cart);
     },
     async initPaymentSession() {
@@ -131,13 +133,26 @@ export const useCartStore = defineStore("cart", {
         }
       }
     },
+    async setPaymentSession(providerId: string) {
+      const client = useMedusaClient();
+
+      if (this.cart) {
+        const { cart } = await client.carts.setPaymentSession(
+          this.cart.id as string,
+          {
+            provider_id: providerId,
+          }
+        );
+        this.setCart(cart);
+      }
+    },
   },
   getters: {
     lineItems(state) {
-      return get(state, ["cart", "items"], []);
+      return get(state, ["cart", "items"], []) as LineItem[];
     },
     paymentSessions(state) {
-      return get(state, ["cart", "payment_sessions"], []);
+      return get(state, ["cart", "payment_sessions"], []) as PaymentSession[];
     },
   },
 });

@@ -45,7 +45,7 @@ export const useRegionStore = defineStore("region", {
       const region = useCookie("region", { maxAge: 60 * 60 * 24 * 365 });
       region.value = null;
     },
-    syncRegion(cart: Cart) {
+    syncRegion(cart: Omit<Cart, "refundable_amount" | "refunded_total">) {
       const cartRegion = {
         regionId: cart.region.id,
         countryCode: cart.region.countries[0].iso_2,
