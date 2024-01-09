@@ -29,7 +29,7 @@
         <CheckoutSummary :cart="cart" />
         <Button
           class="w-full flex justify-content-center mb-7"
-          @click="() => {}"
+          @click="completeCart"
           >Checkout</Button
         >
       </template>
@@ -45,7 +45,7 @@ import { useShippingMethods } from "~/composables/useShippingMethods";
 import { usePaymentSession } from "~/composables/usePaymentSession";
 
 const { cart, lineItems, paymentSessions } = storeToRefs(useCartStore());
-const { initPaymentSession, setPaymentSession } = useCartStore();
+const { initPaymentSession, setPaymentSession, completeCart } = useCartStore();
 const isAddressFormActive = ref(cart?.value?.shipping_address === null);
 
 initPaymentSession();

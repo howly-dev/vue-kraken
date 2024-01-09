@@ -1,16 +1,19 @@
 import { Cart, Region } from "@medusajs/medusa";
 import { Ref, UnwrapRef } from "vue";
+import { PricedShippingOption } from "@medusajs/medusa/dist/types/pricing";
 import { useAsyncData } from "#imports";
 
 export function useShippingMethods(
   cart: Ref<UnwrapRef<Cart>> | Ref<UnwrapRef<UnwrapRef<Cart>>>
 ) {
   const client = useMedusaClient();
-  const { data } = useAsyncData(
+
+  useAsyncData(
     `shipping-options:${cart.value.id}`,
     () => client.shippingOptions.listCartOptions(cart.value.id as string),
     {
       transform: (data) => {
+        transformShippingMethods(data.shipping_options);
         setDefaultShippingMethod();
         return data.shipping_options;
       },
@@ -19,24 +22,26 @@ export function useShippingMethods(
     }
   );
 
-  const shippingMethods = computed(() => {
-    if (toValue(data) && toValue(cart)?.region) {
-      return toValue(data)?.map((option) => ({
-        value: option.id,
-        label: option.name,
-        price: formatAmount({
-          amount: option.amount || 0,
-          region: toValue(cart)?.region as Region,
-        }),
-      }));
-    }
+  const transformShippingMethods = (data: PricedShippingOption[]) => {
+    //  TODO: change so shipping methods is a computed property
+    shippingMethods.value = data.map((option) => ({
+      value: option.id,
+      label: option.name,
+      price: formatAmount({
+        amount: option.amount || 0,
+        region: toValue(cart)?.region as Region,
+      }),
+    }));
+  };
 
-    return [];
-  });
+  const shippingMethods: Ref<
+    { value: string | undefined; label: string | undefined; price: string }[]
+  > = ref([]);
 
   const setDefaultShippingMethod = () => {
-    selectedShippingMethod.value =
-      toValue(cart).shipping_methods[0].shipping_option_id ?? null;
+    if (shippingMethods.value.length) {
+      selectedShippingMethod.value = toValue(shippingMethods)[0].value ?? null;
+    }
   };
 
   const updateShippingMethod = async (shippingMethodId: string) => {

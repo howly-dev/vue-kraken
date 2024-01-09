@@ -15,12 +15,10 @@ import { useRegionStore } from "~/store/region";
 declare type Cart = StoreCartsRes["cart"];
 interface CartState {
   cart: Cart;
-  cartId: string | null;
 }
 export const useCartStore = defineStore("cart", {
   state: (): CartState => ({
     cart: {} as Cart,
-    cartId: null,
   }),
   actions: {
     async initCart() {
@@ -65,6 +63,13 @@ export const useCartStore = defineStore("cart", {
 
       return { cart };
     },
+    async resetCart() {
+      const { getRegionLocal } = useRegionStore();
+
+      this.deleteCartLocal();
+      const savedRegion = getRegionLocal();
+      await this.createNewCart(savedRegion?.regionId);
+    },
     deleteCartLocal() {
       const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
       cartId.value = null;
@@ -73,10 +78,6 @@ export const useCartStore = defineStore("cart", {
       const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
       return toValue(cartId);
     },
-    pay: () => {},
-    startCheckout: () => {},
-    completeCheckout: () => {},
-    updateCart: () => {},
     addShippingMethod: () => {},
     async addLineItem(item: StorePostCartsCartLineItemsReq) {
       const client = useMedusaClient();
@@ -146,6 +147,13 @@ export const useCartStore = defineStore("cart", {
         this.setCart(cart);
       }
     },
+    async completeCart() {
+      const client = useMedusaClient();
+      const router = useRouter();
+      const { data } = await client.carts.complete(this.cart.id as string);
+      await this.resetCart();
+      await router.push(`order/confirmed/${data.id}`);
+    },
   },
   getters: {
     lineItems(state) {
@@ -153,6 +161,19 @@ export const useCartStore = defineStore("cart", {
     },
     paymentSessions(state) {
       return get(state, ["cart", "payment_sessions"], []) as PaymentSession[];
+    },
+    cartId(state) {
+      return state.cart.id ?? null;
+    },
+    readyToComplete(state) {
+      return (
+        !!state.cart &&
+        !!state.cart.email &&
+        !!state.cart.shipping_address &&
+        !!state.cart.billing_address &&
+        !!state.cart.payment_session &&
+        state.cart.shipping_methods?.length > 0
+      );
     },
   },
 });
