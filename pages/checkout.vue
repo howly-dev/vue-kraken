@@ -5,7 +5,7 @@
       <template #main>
         <CheckoutShippingForm
           v-if="isAddressFormActive"
-          v-model="cartEdit"
+          v-model="isAddressFormActive"
           :cart="cart"
         />
         <CheckoutShippingPreview
@@ -29,8 +29,9 @@
         <CheckoutSummary :cart="cart" />
         <Button
           class="w-full flex justify-content-center mb-7"
+          :disabled="readyToComplete === false"
           @click="completeCart"
-          >Checkout</Button
+          >Complete Order</Button
         >
       </template>
     </NuxtLayout>
@@ -44,7 +45,9 @@ import { useCartStore } from "~/store/cart";
 import { useShippingMethods } from "~/composables/useShippingMethods";
 import { usePaymentSession } from "~/composables/usePaymentSession";
 
-const { cart, lineItems, paymentSessions } = storeToRefs(useCartStore());
+const { cart, lineItems, paymentSessions, readyToComplete } = storeToRefs(
+  useCartStore()
+);
 const { initPaymentSession, setPaymentSession, completeCart } = useCartStore();
 const isAddressFormActive = ref(cart?.value?.shipping_address === null);
 

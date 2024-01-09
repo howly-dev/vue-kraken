@@ -166,11 +166,11 @@ export const useCartStore = defineStore("cart", {
       return state.cart.id ?? null;
     },
     readyToComplete(state) {
+      // TODO add billing address condition
       return (
         !!state.cart &&
         !!state.cart.email &&
         !!state.cart.shipping_address &&
-        !!state.cart.billing_address &&
         !!state.cart.payment_session &&
         state.cart.shipping_methods?.length > 0
       );
