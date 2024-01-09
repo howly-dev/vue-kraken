@@ -152,7 +152,7 @@ export const useCartStore = defineStore("cart", {
       const router = useRouter();
       const { data } = await client.carts.complete(this.cart.id as string);
       await this.resetCart();
-      await router.push(`order/confirmed/${data.id}`);
+      await router.push(`order/${data.id}/confirmed`);
     },
   },
   getters: {

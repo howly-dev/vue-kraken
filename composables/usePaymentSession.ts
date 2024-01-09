@@ -1,7 +1,9 @@
 import { Cart } from "@medusajs/medusa";
-import { Ref } from "vue";
+import { Ref, UnwrapRef } from "vue";
 
-export const usePaymentSession = (cart: Readonly<Ref<Cart>>) => {
+export const usePaymentSession = (
+  cart: Ref<UnwrapRef<Cart>> | Ref<UnwrapRef<UnwrapRef<Cart>>>
+) => {
   const providerId = ref(toValue(cart).payment_session?.provider_id ?? "");
   const setPayment = async (
     provider: string,
