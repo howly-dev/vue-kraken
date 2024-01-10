@@ -26,7 +26,6 @@
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { LineItem } from "@medusajs/medusa/dist/models/line-item";
 import { useCartStore } from "~/store/cart";
 import useEnrichedLineItems from "~/composables/useEnrichLineItems";
 import { toRef, useRouter } from "#imports";
@@ -35,5 +34,5 @@ import CheckoutSummary from "~/components/CheckoutSummary.vue";
 const { lineItems, cartId, cart, isCartEmpty } = storeToRefs(useCartStore());
 const router = useRouter();
 const { removeLineItem } = useCartStore();
-const items = useEnrichedLineItems(toRef(lineItems) as LineItem[], cartId);
+const items = useEnrichedLineItems(toRef(lineItems), cartId);
 </script>

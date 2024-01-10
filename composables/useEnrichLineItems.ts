@@ -1,4 +1,4 @@
-import { ref, watchEffect, toValue, Ref } from "vue";
+import { ref, watchEffect, toValue, Ref, ComputedRef } from "vue";
 import { StoreGetProductsParams, LineItem, Product } from "@medusajs/medusa";
 import { omit } from "lodash-es";
 import { useMedusaClient } from "#imports";
@@ -8,7 +8,10 @@ import { useMedusaClient } from "#imports";
  * If you pass an array of line items, it will return those line items with enriched data.
  * Otherwise, it will return the line items from the current cart.
  */
-const useEnrichedLineItems = (lineItems: LineItem[], cartId: Ref<string>) => {
+const useEnrichedLineItems = (
+  lineItems: ComputedRef<LineItem[]>,
+  cartId: Ref<string>
+) => {
   const client = useMedusaClient();
   const enrichedItems: Ref<Omit<LineItem, "beforeInsert">[]> = ref([]);
   const queryParams = ref({});
