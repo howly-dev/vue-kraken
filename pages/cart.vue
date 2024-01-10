@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-7">
-    <CartEmpty v-if="!lineItems.length" />
-    <NuxtLayout name="checkout">
+    <CartEmpty v-if="isCartEmpty" />
+    <NuxtLayout v-if="!isCartEmpty" name="checkout">
       <template #main>
         <p class="font-bold text-3xl">Shopping Bag</p>
         <hr />
@@ -32,7 +32,7 @@ import useEnrichedLineItems from "~/composables/useEnrichLineItems";
 import { toRef, useRouter } from "#imports";
 import CheckoutSummary from "~/components/CheckoutSummary.vue";
 
-const { lineItems, cartId, cart } = storeToRefs(useCartStore());
+const { lineItems, cartId, cart, isCartEmpty } = storeToRefs(useCartStore());
 const router = useRouter();
 const { removeLineItem } = useCartStore();
 const items = useEnrichedLineItems(toRef(lineItems) as LineItem[], cartId);

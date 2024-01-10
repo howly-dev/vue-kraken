@@ -175,5 +175,8 @@ export const useCartStore = defineStore("cart", {
         state.cart.shipping_methods?.length > 0
       );
     },
+    isCartEmpty(state): boolean {
+      return get(state, ["cart", "items"], []).length === 0;
+    },
   },
 });
