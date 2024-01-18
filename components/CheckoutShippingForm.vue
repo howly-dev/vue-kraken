@@ -89,12 +89,24 @@
         class="w-full"
       />
     </div>
+    <div class="field col-12">
+      <div class="flex align-items-center">
+        <Checkbox
+          v-model="sameAsBilling"
+          input-id="same-as-billing"
+          :disabled="true"
+          :binary="true"
+        />
+        <label for="same-as-billing" class="ml-2"> Same as billing </label>
+      </div>
+    </div>
   </div>
   <Button class="my-4" @click="handleSubmit">Save</Button>
 </template>
 <script lang="ts" setup>
 import InputText from "primevue/inputtext";
 import Avatar from "primevue/avatar";
+import Checkbox from "primevue/checkbox";
 import { Cart } from "@medusajs/medusa";
 import { UnwrapRef } from "vue";
 import { reactive } from "#imports";
@@ -122,10 +134,11 @@ const defaultFormData = () => ({
 });
 
 const formData = reactive(defaultFormData());
+const sameAsBilling = ref(true);
 
 const handleSubmit = () => {
   const { email, ...addressPayload } = formData;
-  setAddresses(addressPayload, email);
+  setAddresses(addressPayload, email, toValue(sameAsBilling));
   emit("update:modelValue", false);
 };
 

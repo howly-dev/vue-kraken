@@ -103,11 +103,16 @@ export const useCartStore = defineStore("cart", {
         this.cart = cart;
       }
     },
-    async setAddresses(data: AddressPayload, email: string) {
+    async setAddresses(
+      data: AddressPayload,
+      email: string,
+      sameAsBilling: boolean
+    ) {
       const client = useMedusaClient();
       const payload: StorePostCartsCartReq = {
         email,
         shipping_address: { ...data },
+        ...(sameAsBilling && { billing_address: { ...data } }),
       };
 
       const { cart } = await client.carts.update(

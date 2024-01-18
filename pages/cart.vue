@@ -18,7 +18,7 @@
         <Button
           class="w-full flex justify-content-center mb-7"
           @click="router.push({ path: '/checkout' })"
-          >Go to checkout</Button
+          >Select payment & delivery</Button
         >
       </template>
     </NuxtLayout>
