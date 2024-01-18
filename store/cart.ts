@@ -183,5 +183,20 @@ export const useCartStore = defineStore("cart", {
     isCartEmpty(state): boolean {
       return get(state, ["cart", "items"], []).length === 0;
     },
+    countryOptions(state) {
+      const { regions } = useRegionStore();
+      const currentRegion = regions?.find(
+        (r) => r.id === state.cart?.region_id
+      );
+
+      if (!currentRegion) {
+        return [];
+      }
+
+      return currentRegion.countries.map((country) => ({
+        value: country.iso_2,
+        label: country.display_name,
+      }));
+    },
   },
 });

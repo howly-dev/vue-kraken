@@ -6,6 +6,7 @@
         <CheckoutShippingForm
           v-if="isAddressFormActive"
           v-model="isAddressFormActive"
+          :countries="countryOptions"
           :cart="cart"
         />
         <CheckoutShippingPreview
@@ -45,9 +46,8 @@ import { useCartStore } from "~/store/cart";
 import { useShippingMethods } from "~/composables/useShippingMethods";
 import { usePaymentSession } from "~/composables/usePaymentSession";
 
-const { cart, lineItems, paymentSessions, readyToComplete } = storeToRefs(
-  useCartStore()
-);
+const { cart, lineItems, paymentSessions, readyToComplete, countryOptions } =
+  storeToRefs(useCartStore());
 const { initPaymentSession, setPaymentSession, completeCart } = useCartStore();
 const isAddressFormActive = ref(cart?.value?.shipping_address === null);
 

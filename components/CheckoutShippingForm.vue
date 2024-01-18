@@ -65,12 +65,15 @@
         class="w-full"
       />
     </div>
+
     <div class="field col-12">
-      <InputText
+      <Dropdown
         v-model="formData.country_code"
-        type="text"
-        placeholder="Country"
+        :options="countries"
+        option-label="label"
+        option-value="value"
         class="w-full"
+        placeholder="Select a country"
       />
     </div>
     <div class="field col-12">
@@ -107,6 +110,7 @@
 import InputText from "primevue/inputtext";
 import Avatar from "primevue/avatar";
 import Checkbox from "primevue/checkbox";
+import Dropdown from "primevue/dropdown";
 import { Cart } from "@medusajs/medusa";
 import { UnwrapRef } from "vue";
 import { reactive } from "#imports";
@@ -114,6 +118,7 @@ import { useCartStore } from "~/store/cart";
 
 const props = defineProps<{
   cart: UnwrapRef<Cart> | UnwrapRef<UnwrapRef<Cart>> | undefined | null;
+  countries: { value: string; label: string }[];
   modelValue: boolean;
 }>();
 
