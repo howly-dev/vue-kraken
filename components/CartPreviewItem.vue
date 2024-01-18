@@ -51,7 +51,7 @@ import { useCartStore } from "~/store/cart";
 const { cart } = useCartStore();
 
 const props = defineProps<{
-  lineItem: LineItem;
+  lineItem: Omit<LineItem, "beforeInsert">;
 }>();
 
 const emit = defineEmits(["lineItem:remove"]);

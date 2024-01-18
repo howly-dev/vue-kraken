@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-7">
-    <CartEmpty v-if="!lineItems.length" />
-    <NuxtLayout name="checkout">
+    <CartEmpty v-if="isCartEmpty" />
+    <NuxtLayout v-if="!isCartEmpty" name="checkout">
       <template #main>
         <p class="font-bold text-3xl">Shopping Bag</p>
         <hr />
@@ -18,7 +18,7 @@
         <Button
           class="w-full flex justify-content-center mb-7"
           @click="router.push({ path: '/checkout' })"
-          >Go to checkout</Button
+          >Select payment & delivery</Button
         >
       </template>
     </NuxtLayout>
@@ -26,14 +26,13 @@
 </template>
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { LineItem } from "@medusajs/medusa/dist/models/line-item";
 import { useCartStore } from "~/store/cart";
 import useEnrichedLineItems from "~/composables/useEnrichLineItems";
 import { toRef, useRouter } from "#imports";
 import CheckoutSummary from "~/components/CheckoutSummary.vue";
 
-const { lineItems, cartId, cart } = storeToRefs(useCartStore());
+const { lineItems, cartId, cart, isCartEmpty } = storeToRefs(useCartStore());
 const router = useRouter();
 const { removeLineItem } = useCartStore();
-const items = useEnrichedLineItems(toRef(lineItems) as LineItem[], cartId);
+const items = useEnrichedLineItems(toRef(lineItems), cartId);
 </script>

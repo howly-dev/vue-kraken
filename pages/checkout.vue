@@ -2,13 +2,37 @@
   <div class="container mt-7">
     <CartEmpty v-if="!lineItems.length" />
     <NuxtLayout name="checkout">
-      <template #main> Checkout Form </template>
+      <template #main>
+        <CheckoutShippingForm
+          v-if="isAddressFormActive"
+          v-model="isAddressFormActive"
+          :countries="countryOptions"
+          :cart="cart"
+        />
+        <CheckoutShippingPreview
+          v-if="!isAddressFormActive"
+          v-model="isAddressFormActive"
+          :shipping-address="cart.shipping_address as Address"
+          :email="cart?.email"
+        />
+        <CheckoutDeliveryForm
+          :shipping-methods="shippingMethods"
+          :model-value="selectedShippingMethod"
+          @update:model-value="updateShippingMethod"
+        />
+        <CheckoutPaymentForm
+          v-model="providerId"
+          :payment-sessions="paymentSessions"
+          @update:model-value="(id) => setPayment(id, setPaymentSession)"
+        />
+      </template>
       <template #sidebar>
         <CheckoutSummary :cart="cart" />
         <Button
           class="w-full flex justify-content-center mb-7"
-          @click="() => {}"
-          >Go to shipping</Button
+          :disabled="readyToComplete === false"
+          @click="completeCart"
+          >Complete Order</Button
         >
       </template>
     </NuxtLayout>
@@ -17,8 +41,20 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import { Address } from "@medusajs/medusa";
 import { useCartStore } from "~/store/cart";
-import CheckoutSummary from "~/components/CheckoutSummary.vue";
+import { useShippingMethods } from "~/composables/useShippingMethods";
+import { usePaymentSession } from "~/composables/usePaymentSession";
 
-const { cart } = storeToRefs(useCartStore());
+const { cart, lineItems, paymentSessions, readyToComplete, countryOptions } =
+  storeToRefs(useCartStore());
+const { initPaymentSession, setPaymentSession, completeCart } = useCartStore();
+const isAddressFormActive = ref(cart?.value?.shipping_address === null);
+
+initPaymentSession();
+
+const { updateShippingMethod, shippingMethods, selectedShippingMethod } =
+  useShippingMethods(cart);
+
+const { setPayment, providerId } = usePaymentSession(cart);
 </script>

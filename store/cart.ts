@@ -2,21 +2,23 @@ import { defineStore } from "pinia";
 import {
   StoreCartsRes,
   StorePostCartsCartLineItemsReq,
+  StorePostCartsCartReq,
 } from "@medusajs/medusa";
 import { get } from "lodash-es";
 import { toValue } from "vue";
+import { AddressPayload } from "@medusajs/types";
+import { PaymentSession } from "@medusajs/medusa/dist/models/payment-session";
+import { LineItem } from "@medusajs/medusa/dist/models/line-item";
 import { useCookie, useMedusaClient } from "#imports";
 import { useRegionStore } from "~/store/region";
 
 declare type Cart = StoreCartsRes["cart"];
 interface CartState {
-  cart?: Cart;
-  cartId: string | null;
+  cart: Cart;
 }
 export const useCartStore = defineStore("cart", {
   state: (): CartState => ({
     cart: {} as Cart,
-    cartId: null,
   }),
   actions: {
     async initCart() {
@@ -37,9 +39,9 @@ export const useCartStore = defineStore("cart", {
           return;
         }
 
-        this.cart = cart as any;
+        this.cart = cart;
         // Argument type Cart is not assignable to parameter type Cart, for real?
-        syncRegion(cart as any);
+        syncRegion(cart);
       } else {
         const region = getRegionLocal();
         await this.createNewCart(region?.regionId);
@@ -47,7 +49,7 @@ export const useCartStore = defineStore("cart", {
     },
     setCart(cart: Cart) {
       const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
-      this.cart = cart as any;
+      this.cart = cart;
       cartId.value = cart.id;
     },
     async createNewCart(regionId?: string) {
@@ -61,6 +63,13 @@ export const useCartStore = defineStore("cart", {
 
       return { cart };
     },
+    async resetCart() {
+      const { getRegionLocal } = useRegionStore();
+
+      this.deleteCartLocal();
+      const savedRegion = getRegionLocal();
+      await this.createNewCart(savedRegion?.regionId);
+    },
     deleteCartLocal() {
       const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
       cartId.value = null;
@@ -69,10 +78,6 @@ export const useCartStore = defineStore("cart", {
       const cartId = useCookie("cart_id", { maxAge: 60 * 60 * 24 * 365 });
       return toValue(cartId);
     },
-    pay: () => {},
-    startCheckout: () => {},
-    completeCheckout: () => {},
-    updateCart: () => {},
     addShippingMethod: () => {},
     async addLineItem(item: StorePostCartsCartLineItemsReq) {
       const client = useMedusaClient();
@@ -83,7 +88,7 @@ export const useCartStore = defineStore("cart", {
       );
 
       if (cart) {
-        this.cart = cart as any;
+        this.cart = cart;
       }
     },
     async removeLineItem(itemId: string) {
@@ -95,30 +100,103 @@ export const useCartStore = defineStore("cart", {
       );
 
       if (cart) {
-        this.cart = cart as any;
+        this.cart = cart;
       }
+    },
+    async setAddresses(
+      data: AddressPayload,
+      email: string,
+      sameAsBilling: boolean
+    ) {
+      const client = useMedusaClient();
+      const payload: StorePostCartsCartReq = {
+        email,
+        shipping_address: { ...data },
+        ...(sameAsBilling && { billing_address: { ...data } }),
+      };
+
+      const { cart } = await client.carts.update(
+        this.cartId as string,
+        payload
+      );
+      this.setCart(cart);
+    },
+    async initPaymentSession() {
+      const client = useMedusaClient();
+      if (
+        this.cart?.id &&
+        !this.cart.payment_sessions?.length &&
+        this.cart?.items?.length
+      ) {
+        const { cart } = await client.carts.createPaymentSessions(
+          this.cart?.id as string
+        );
+
+        if (!cart) {
+          setTimeout(this.initPaymentSession, 500);
+        } else {
+          this.setCart(cart);
+        }
+      }
+    },
+    async setPaymentSession(providerId: string) {
+      const client = useMedusaClient();
+
+      if (this.cart) {
+        const { cart } = await client.carts.setPaymentSession(
+          this.cart.id as string,
+          {
+            provider_id: providerId,
+          }
+        );
+        this.setCart(cart);
+      }
+    },
+    async completeCart() {
+      const client = useMedusaClient();
+      const router = useRouter();
+      const { data } = await client.carts.complete(this.cart.id as string);
+      await this.resetCart();
+      await router.push(`order/${data.id}/confirmed`);
     },
   },
   getters: {
     lineItems(state) {
-      return get(state, ["cart", "items"], []);
+      return get(state, ["cart", "items"], []) as LineItem[];
+    },
+    paymentSessions(state) {
+      return get(state, ["cart", "payment_sessions"], []) as PaymentSession[];
     },
     cartId(state) {
-      return state?.cart?.id;
+      return state.cart.id ?? null;
+    },
+    readyToComplete(state) {
+      // TODO add billing address condition
+      return (
+        !!state.cart &&
+        !!state.cart.email &&
+        !!state.cart.shipping_address &&
+        !!state.cart.payment_session &&
+        state.cart.shipping_methods?.length > 0
+      );
+    },
+    isCartEmpty(state): boolean {
+      return get(state, ["cart", "items"], []).length === 0;
+    },
+    countryOptions(state) {
+      const { regions } = useRegionStore();
+      const currentRegion = regions?.find(
+        (r) => r.id === state.cart?.region_id
+      );
+
+      if (!currentRegion) {
+        return [];
+      }
+
+      return currentRegion.countries.map((country) => ({
+        value: country.iso_2,
+        label: country.display_name,
+      }));
     },
   },
 });
-
-// setCart: (cart: Cart) => void;
-// pay: ReturnType<typeof useSetPaymentSession>;
-// createCart: ReturnType<typeof useCreateCart>;
-// startCheckout: ReturnType<typeof useCreatePaymentSession>;
-// completeCheckout: ReturnType<typeof useCompleteCart>;
-// updateCart: ReturnType<typeof useUpdateCart>;
-// addShippingMethod: ReturnType<typeof useAddShippingMethodToCart>;
-// totalItems: number;
-
-// {
-//   variant_id: variantId,
-//       quantity: quantity,
-// },

@@ -3,7 +3,7 @@
     <div class="flex-grow-1">
       <slot name="main"></slot>
     </div>
-    <div class="md:w-3">
+    <div class="flex-none w-3">
       <slot name="sidebar"></slot>
     </div>
   </div>
